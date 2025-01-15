@@ -19,11 +19,11 @@ async function scrapeLeetCodeProblem(url: string) {
             waitUntil: 'networkidle0',
         });
         const problemData = await page.evaluate(() => {
-            let preAll = document.querySelectorAll('div.elfjS pre');
-            if (preAll.length === 0) {
-                preAll = document.querySelectorAll('div.example-block');
+            let DOMElemAll = document.querySelectorAll('div.elfjS pre');
+            if (DOMElemAll.length === 0) {
+                DOMElemAll = document.querySelectorAll('div.example-block');
             }
-            return Array.from(preAll).map(pre => pre.textContent!.trim().replace(/"/g, ''));
+            return Array.from(DOMElemAll).map(DOMElem => DOMElem.textContent!.trim());
         });
         await browser.close();
         // Data extracting
