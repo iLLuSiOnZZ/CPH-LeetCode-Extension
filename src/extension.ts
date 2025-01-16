@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import puppeteer from 'puppeteer';
-import { exec, execSync } from 'child_process';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import * as path from 'path';
+import os from 'os';
 
 const workspacePath = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : '';
 const testcasesFolderPath = path.join(workspacePath, 'testcases');
@@ -70,7 +71,6 @@ async function scrapeLeetCodeProblem(url: string) {
                     if (variableStringIn[variableStringIn.length - 1] === ',') {
                         variableStringIn = variableStringIn.slice(0, variableStringIn.length - 1);
                     }
-                    variableStringIn = variableStringIn.replace(/([a-zA-Z]+)/g, '"$1"');
                     const variableIn = JSON.parse(variableStringIn);
                     if (Array.isArray(variableIn)) {
                         finalInput += handleArray(variableIn);
@@ -89,7 +89,6 @@ async function scrapeLeetCodeProblem(url: string) {
             for (let i = 8; i < answerData.length; i++) {
                 variableStringAns += answerData[i];
             }
-            variableStringAns = variableStringAns.replace(/([a-zA-Z]+)/g, '"$1"');
             const variableAns = JSON.parse(variableStringAns);
             if (Array.isArray(variableAns)) {
                 finalAnswer += handleArray(variableAns);
@@ -187,6 +186,11 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 });
                 finalStatementShowing();
+                const isWindows = os.platform() === 'win32';
+                const compiledFileExtension = isWindows ? '.exe' : '.out';
+                const compiledFilePath = `${filePathWithoutExtension}${compiledFileExtension}`;
+                const delCommand = isWindows ? `del "${compiledFilePath}"` : `rm "${compiledFilePath}"`; 
+                execSync(delCommand);
             }
             else if (fileLanguage === 'python') {
                 vscode.window.showInformationMessage('Running test cases...');
