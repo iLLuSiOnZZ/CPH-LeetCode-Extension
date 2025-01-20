@@ -22,7 +22,6 @@ CPH LeetCode Extension is a VS Code extension that enhances your LeetCode coding
 
 ### 4. Multi-Language Support
 - Supports commonly used languages such as Python and C++.
-- Customizable compile and run commands in the settings for each language.
 
 ## Usage
 
@@ -40,7 +39,7 @@ CPH LeetCode Extension is a VS Code extension that enhances your LeetCode coding
 
 1. Open your coding workspace in VS Code.
 2. Use the `Fetch Test Cases` command to retrieve test cases from a LeetCode problem URL.
-3. Write your code in the editor.
+3. Write your code in the editor. Use standard input and output in the code. For any container data structure like an array, the input will be of the format of first the size of the array followed by the elements of it. This is applicable to higher dimensional arrays, jagged arrays etc.
 4. Use the `Run Test Cases` command to execute your code and see the results.
 
 ## Installation
