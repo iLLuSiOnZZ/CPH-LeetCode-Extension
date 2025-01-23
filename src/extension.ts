@@ -81,7 +81,7 @@ async function scrapeLeetCodeProblem(url: string) {
                     if (finalInput[finalInput.length - 1] === ' ') {
                         finalInput = finalInput.slice(0, finalInput.length - 1);
                     }
-                    finalInput += '\r\n';
+                    finalInput += '\n';
                 }
             }
             let finalAnswer = '';
@@ -97,7 +97,12 @@ async function scrapeLeetCodeProblem(url: string) {
                 finalAnswer += `${variableAns} `;
             }
             finalAnswer = finalAnswer.slice(0, finalAnswer.length - 1);
-            finalAnswer += '\r\n';
+            if(os.platform() === 'win32') {
+                finalAnswer += '\r\n';
+            }
+            else{
+                finalAnswer += '\n';
+            }
             fs.writeFileSync(`${testcasesFolderPath}/input_${i + 1}.txt`, finalInput);
             fs.writeFileSync(`${testcasesFolderPath}/answer_${i + 1}.txt`, finalAnswer);
         }
@@ -141,7 +146,7 @@ function finalStatementShowing() {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    const disposable1 = vscode.commands.registerCommand('cph.fetchTestCases', async () => {
+    const disposable1 = vscode.commands.registerCommand('cphlc.fetchTestCases', async () => {
         const url = await vscode.window.showInputBox({
             prompt: 'Enter the LeetCode problem URL',
         });
@@ -163,7 +168,7 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage('No URL provided.');
         }
     });
-    const disposable2 = vscode.commands.registerCommand('cph.runTestCases', async () => {
+    const disposable2 = vscode.commands.registerCommand('cphlc.runTestCases', async () => {
         // Compiling, executing and comparing test cases
         const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
@@ -186,10 +191,17 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 });
                 finalStatementShowing();
-                const isWindows = os.platform() === 'win32';
-                const compiledFileExtension = isWindows ? '.exe' : '.out';
-                const compiledFilePath = `${filePathWithoutExtension}${compiledFileExtension}`;
-                const delCommand = isWindows ? `del "${compiledFilePath}"` : `rm "${compiledFilePath}"`; 
+                let compiledFileExtension = '';
+                if(os.platform() === 'win32') {
+                    compiledFileExtension = '.exe';
+                }
+                else if(os.platform() === 'darwin') {
+                    compiledFileExtension = '';
+                }
+                else {
+                    compiledFileExtension = '.out';
+                }
+                const delCommand = os.platform() === 'win32' ? `del "${filePathWithoutExtension}${compiledFileExtension}"` : `rm "${filePathWithoutExtension}${compiledFileExtension}"`;
                 execSync(delCommand);
             }
             else if (fileLanguage === 'python') {
